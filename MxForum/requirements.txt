@@ -1,0 +1,8 @@
+tornado
+wtforms
+peewee
+pymysql
+aiomysql
+PyJWT
+aiofiles
+pillow
