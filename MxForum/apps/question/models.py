@@ -21,7 +21,8 @@ class Question(BaseModel):
 
 class Answer(BaseModel):
     # 回答和回复
-    user = ForeignKeyField(User, verbose_name="用户", related_name="author")
+    user = ForeignKeyField(User, verbose_name="用户")
+    # user = ForeignKeyField(User, verbose_name="用户", related_name="author")
     question = ForeignKeyField(Question, verbose_name="问题")
     parent_answer = ForeignKeyField('self', null=True, verbose_name="回答", related_name="answer_parent")
     reply_user = ForeignKeyField(User, verbose_name="用户", related_name="relyed_author", null=True)

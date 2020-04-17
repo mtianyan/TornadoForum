@@ -1,11 +1,12 @@
 # 阻塞io
 import socket
 import requests
+
 html = requests.get("http://www.baidu.com").text
 # #1. 三次握手建立tcp连接，
 # # 2. 等待服务器响应
 print(html)
-print("*"*30)
+print("*" * 30)
 
 # 如何通过socket直接获取html
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

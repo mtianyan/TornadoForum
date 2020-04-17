@@ -48,10 +48,10 @@ async def main():
 
     # 启动协程
     workers = gen.multi([worker() for _ in range(concurrency)])
-    await q.join()
+    await q.join()  # 等待q 为空
 
     for _ in range(concurrency):
-        await q.put(None)
+        await q.put(None)  # 每个协程取同一个queue，另两个协程也需要取到none
 
     await workers
 

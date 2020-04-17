@@ -9,6 +9,7 @@ try:
     client.connect((host, 80))  # 阻塞io， 意味着这个时候cpu是空闲的
 except BlockingIOError as e:
     # 做一些其他事
+    # client.connect((host, 80))
     pass
 
 while 1:

@@ -5,20 +5,35 @@
 from tornado.gen import coroutine
 
 
-async def yield_test():
+def yield_test():
     yield 1
     yield 2
     yield 3
 
 
+async def yield_test2():
+    yield 1
+    # yield 2
+    # yield 3
+
+
+my_yield = yield_test()
+for item in my_yield:
+    print(item)
+
+
 async def main():
-    result = await yield_test()
+    result = await yield_test2()
+    print(result)
     # result = await yield_test2()
 
 
 async def main2():
     await yield_test()
 
-my_yield = yield_test()
-for item in my_yield:
-    print(item)
+if __name__ == "__main__":
+    import tornado
+    io_loop = tornado.ioloop.IOLoop.current()
+
+    # run_sync方法可以在运行完某个协程之后停止事件循环
+    io_loop.run_sync(main)

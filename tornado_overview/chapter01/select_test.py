@@ -40,7 +40,7 @@ def loop_forever():
         ready = selector.select()
         for key, mask in ready:
             call_back = key.data
-            call_back(key)
+            call_back(key) # key是参数 call_back 是 self.connected
 
 
 if __name__ == "__main__":
