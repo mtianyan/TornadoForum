@@ -40,6 +40,9 @@ class MainHandler(web.RequestHandler):
                 "detail": "<a href='http://www.baidu.com'>查看详情</a>"
             }
         ]
+        # template.Template("<h1>{{word}}</h1>")
+        # template.Loader("/index.html")
+        # self.finish(loader.load("hello.html").generate(word=word))
         self.render("index.html", orders=orders)
 
 
@@ -50,7 +53,7 @@ class MainHandler2(web.RequestHandler):
 
 
 settings = {
-    "static_path": "/Users/mtianyan/Documents/iCollections/慕课学习/TornadoForum/tornado_overview/chapter02/static",
+    "static_path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter02/static",
     "static_url_prefix": "/static2/",
     "template_path": "templates"
 }
@@ -59,7 +62,7 @@ if __name__ == "__main__":
     app = web.Application([
         ("/", MainHandler),
         ("/2/", RedirectHandler, {"url": "/"}),
-        ("/static/(.*)", StaticFileHandler, {"path": "/Users/mtianyan/Documents/iCollections/慕课学习/TornadoForum/tornado_overview/chapter02/templates"})
+        ("/static/(.*)", StaticFileHandler, {"path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter02/static"})
     ], debug=True, **settings)
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()

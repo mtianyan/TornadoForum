@@ -17,7 +17,12 @@ class OrderModule(tornado.web.UIModule):
         return price * nums
 
     def render(self, order, *args, **kwargs):
-        self.render_string("ui_modules/order-list.html")
+        return self.render_string("ui_modules/order-list.html", order=order)
+
+    # def embedded_css(self):
+        # return "body {}"
+    def css_files(self):
+        return ["ui_modules/order-list.css"]
 
 
 class MainHandler(web.RequestHandler):
@@ -58,7 +63,7 @@ class MainHandler2(web.RequestHandler):
 
 
 settings = {
-    "static_path": "C:/projects/tornado_overview/chapter02/static",
+    "static_path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter02/static",
     "static_url_prefix": "/static2/",
     "template_path": "templates",
     "ui_modules": {
@@ -70,7 +75,7 @@ if __name__ == "__main__":
     app = web.Application([
         ("/", MainHandler),
         ("/2/", RedirectHandler, {"url": "/"}),
-        ("/static/(.*)", StaticFileHandler, {"path": "C:/projects/tornado_overview/chapter02/static"})
+        ("/static/(.*)", StaticFileHandler, {"path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter02/static"})
     ], debug=True, **settings)
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()

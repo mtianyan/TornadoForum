@@ -16,8 +16,8 @@ class PeopleIdHandler(web.RequestHandler):
         self.db_name = name
 
     async def get(self, id, *args, **kwargs):
-        self.redirect("用户id:{}".format(id))
-        # self.redirect(self.reverse_url("people_name", "bobby"))
+        # self.redirect("用户id:{}".format(id))
+        self.redirect(self.reverse_url("people_name", "bobby"))
 
 
 class PeopleNameHandler(web.RequestHandler):

@@ -6,7 +6,6 @@
             </div>
             <div class="g-info">{{ order['name'] }}</a></div>
         </div>
-        {{ total = total+order['price']*order['nums'] }}
         {% from chapter02.utils import cal_total %}
         <div class="col col-2">{{ order['price'] }}元</div>
         <div class="col col-2">{{ order['nums'] }}</div>

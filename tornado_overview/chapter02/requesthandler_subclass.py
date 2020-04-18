@@ -25,16 +25,16 @@ class MainHandler2(web.RequestHandler):
 
 
 settings = {
-    "static_path": "C:/projects/tornado_overview/chapter02/static",
-    "static_url_prefix": "/static2/"
+    "static_path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter02/static",
+    # "static_url_prefix": "/static2/"
 }
-
+# http://127.0.0.1:8888/static2/css/base.css
 if __name__ == "__main__":
     app = web.Application([
         ("/", MainHandler),
         ("/2/", RedirectHandler, {"url": "/"}),
-        ("/static3/(.*)", StaticFileHandler, {"path": "C:/projects/tornado_overview/chapter02/static"})
-    ], debug=True, **settings)
+        # ("/static3/(.*)", StaticFileHandler, {"path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter02/static"})], debug=True, **settings)
+        ("/static3/(.*)", StaticFileHandler)], debug=True, **settings)
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()
 

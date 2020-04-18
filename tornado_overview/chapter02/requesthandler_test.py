@@ -21,11 +21,11 @@ class MainHandler(RequestHandler):
     # http方法
 
     def get(self, *args, **kwargs):
-        # data1 = self.get_query_argument("name")
+        # data1 = self.get_query_argument("name")  # name=mtianyan1&name=mtianyan2 取到一个list
         # data2 = self.get_query_arguments("name")
         data1 = self.get_argument("name")
         data2 = self.get_arguments("name")
-        self.redirect("", permanent=True)
+        self.redirect("", permanent=True)  # 301 永久 302 临时
         pass
 
     def post(self, *args, **kwargs):
@@ -61,6 +61,7 @@ urls = [
 
 if __name__ == "__main__":
     from tornado import web
+
     app = web.Application(urls, debug=True)
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()

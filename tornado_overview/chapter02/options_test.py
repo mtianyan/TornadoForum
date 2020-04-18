@@ -1,4 +1,4 @@
-#define, options
+# define, options
 
 import time
 from tornado import web
@@ -11,6 +11,7 @@ define('debug', default=True, help="set tornado debug mode", type=bool)
 
 # options.parse_command_line()
 options.parse_config_file("conf.cfg")
+
 
 # options是一个类，全局只有一个options
 
