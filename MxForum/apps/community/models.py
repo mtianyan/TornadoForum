@@ -5,6 +5,7 @@ from peewee import *
 from MxForm.models import BaseModel
 from apps.users.models import User
 
+
 class CommunityGroup(BaseModel):
     creator = ForeignKeyField(User, verbose_name="创建者")
     name = CharField(max_length=100, null=True, verbose_name="名称")
@@ -13,7 +14,7 @@ class CommunityGroup(BaseModel):
     desc = TextField(verbose_name="简介")
     notice = TextField(verbose_name="公告")
 
-    #小组的信息
+    # 小组的信息
     member_nums = IntegerField(default=0, verbose_name="成员数")
     post_nums = IntegerField(default=0, verbose_name="帖子数")
 
@@ -21,10 +22,13 @@ class CommunityGroup(BaseModel):
     def extend(cls):
         return cls.select(cls, User.id, User.nick_name).join(User)
 
+
 HANDLE_STATUS = (
     ("agree", "同意"),
     ("refuse", "拒绝")
 )
+
+
 class CommunityGroupMember(BaseModel):
     user = ForeignKeyField(User, verbose_name="用户")
     community = ForeignKeyField(CommunityGroup, verbose_name="社区")
@@ -49,6 +53,7 @@ class Post(BaseModel):
     def extend(cls):
         return cls.select(cls, User.id, User.nick_name).join(User)
 
+
 class PostComment(BaseModel):
     # 评论和回复
     user = ForeignKeyField(User, verbose_name="用户", related_name="author")
@@ -61,8 +66,8 @@ class PostComment(BaseModel):
 
     @classmethod
     def extend(cls):
-        #1. 多表join
-        #2. 多字段映射同一个model
+        # 1. 多表join
+        # 2. 多字段映射同一个model
         author = User.alias()
         relyed_user = User.alias()
         return cls.select(cls, Post, relyed_user.id, relyed_user.nick_name, author.id, author.nick_name).join(

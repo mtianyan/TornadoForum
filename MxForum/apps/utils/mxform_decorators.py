@@ -26,6 +26,6 @@ def authenticated_async(method):
                 self.set_status(401)
         else:
             self.set_status(401)
-        self.finish({})
+        # self.finish({})
 
     return wrapper

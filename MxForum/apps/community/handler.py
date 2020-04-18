@@ -16,7 +16,7 @@ from apps.utils.util_func import json_serial
 class GroupDetailHanlder(RedisHandler):
     @authenticated_async
     async def get(self, group_id, *args, **kwargs):
-        #获取小组的基本信息
+        # 获取小组的基本信息
         re_data = {}
         try:
             group = await self.application.objects.get(CommunityGroup, id=int(group_id))
@@ -40,7 +40,7 @@ class GroupMemberHandler(RedisHandler):
 
     @authenticated_async
     async def post(self, group_id, *args, **kwargs):
-        #申请加入小组
+        # 申请加入小组
         re_data = {}
         param = self.request.body.decode("utf8")
         param = json.loads(param)
@@ -70,16 +70,16 @@ class GroupMemberHandler(RedisHandler):
 
 class GroupHandler(RedisHandler):
     async def get(self, *args, **kwargs):
-        #获取小组列表
+        # 获取小组列表
         re_data = []
         community_query = CommunityGroup.extend()
 
-        #根据类别进行过滤
+        # 根据类别进行过滤
         c = self.get_argument("c", None)
         if c:
-            community_query = community_query.filter(CommunityGroup.category==c)
+            community_query = community_query.filter(CommunityGroup.category == c)
 
-        #根据参数进行排序
+        # 根据参数进行排序
         order = self.get_argument("o", None)
         if order:
             if order == "new":
@@ -103,18 +103,18 @@ class GroupHandler(RedisHandler):
     async def post(self, *args, **kwargs):
         re_data = {}
 
-        #不能使用jsonform
+        # 不能使用jsonform
         group_form = CommunityGroupForm(self.request.body_arguments)
         if group_form.validate():
-            #自己完成图片字段的验证
+            # 自己完成图片字段的验证
             files_meta = self.request.files.get("front_image", None)
             if not files_meta:
                 self.set_status(400)
                 re_data["front_image"] = "请上传图片"
             else:
-                #完成图片保存并将值设置给对应的记录
-                #通过aiofiles写文件
-                #1. 文件名
+                # 完成图片保存并将值设置给对应的记录
+                # 通过aiofiles写文件
+                # 1. 文件名
                 new_filename = ""
                 for meta in files_meta:
                     filename = meta["filename"]
@@ -124,9 +124,9 @@ class GroupHandler(RedisHandler):
                         await f.write(meta['body'])
 
                 group = await self.application.objects.create(CommunityGroup,
-                                                              add_user = self.current_user, name=group_form.name.data,
+                                                              creator=self.current_user, name=group_form.name.data,
                                                               category=group_form.category.data, desc=group_form.desc.data,
-                                                              notice=group_form.notice.data, from_image = new_filename)
+                                                              notice=group_form.notice.data, from_image=new_filename)
 
                 re_data["id"] = group.id
         else:
@@ -136,10 +136,11 @@ class GroupHandler(RedisHandler):
 
         self.finish(re_data)
 
+
 class PostHandler(RedisHandler):
     @authenticated_async
-    async def get(self,group_id, *args, **kwargs):
-        #获取小组内的帖子
+    async def get(self, group_id, *args, **kwargs):
+        # 获取小组内的帖子
         post_list = []
         try:
 
@@ -157,14 +158,14 @@ class PostHandler(RedisHandler):
 
             for post in posts:
                 item_dict = {
-                    "user":{
-                        "id":post.user.id,
+                    "user": {
+                        "id": post.user.id,
                         "nick_name": post.user.nick_name
                     },
-                    "id":post.id,
-                    "title":post.title,
-                    "content":post.content,
-                    "comment_nums":post.comment_nums
+                    "id": post.id,
+                    "title": post.title,
+                    "content": post.content,
+                    "comment_nums": post.comment_nums
                 }
                 post_list.append(item_dict)
         except CommunityGroupMember.DoesNotExist as e:
@@ -174,10 +175,9 @@ class PostHandler(RedisHandler):
 
         self.finish(json.dumps(post_list))
 
-
     @authenticated_async
-    async def post(self,group_id, *args, **kwargs):
-        #小组内发帖
+    async def post(self, group_id, *args, **kwargs):
+        # 小组内发帖
         re_data = {}
 
         try:
@@ -189,7 +189,7 @@ class PostHandler(RedisHandler):
             param = json.loads(param)
             form = PostForm.from_json(param)
             if form.validate():
-                post = await self.application.objects.create(Post, user=self.current_user,title=form.title.data,
+                post = await self.application.objects.create(Post, user=self.current_user, title=form.title.data,
                                                              content=form.content.data, group=group)
                 re_data["id"] = post.id
             else:
@@ -208,9 +208,9 @@ class PostHandler(RedisHandler):
 class PostDetailHandler(RedisHandler):
     @authenticated_async
     async def get(self, post_id, *args, **kwargs):
-        #获取某一个帖子的详情
+        # 获取某一个帖子的详情
         re_data = {}
-        post_details = await self.application.objects.execute(Post.extend().where(Post.id==int(post_id)))
+        post_details = await self.application.objects.execute(Post.extend().where(Post.id == int(post_id)))
         re_count = 0
         for data in post_details:
             item_dict = {}
@@ -228,16 +228,17 @@ class PostDetailHandler(RedisHandler):
 
         self.finish(re_data)
 
+
 class PostCommentHanlder(RedisHandler):
     @authenticated_async
     async def get(self, post_id, *args, **kwargs):
-        #获取帖子的所有评论
+        # 获取帖子的所有评论
         re_data = []
 
         try:
             post = await self.application.objects.get(Post, id=int(post_id))
             post_coments = await self.application.objects.execute(
-                PostComment.extend().where(PostComment.post==post, PostComment.parent_comment.is_null(True)).order_by(PostComment.add_time.desc())
+                PostComment.extend().where(PostComment.post == post, PostComment.parent_comment.is_null(True)).order_by(PostComment.add_time.desc())
             )
 
             for item in post_coments:
@@ -249,9 +250,9 @@ class PostCommentHanlder(RedisHandler):
                     pass
 
                 item_dict = {
-                    "user":model_to_dict(item.user),
-                    "content":item.content,
-                    "reply_nums":item.reply_nums,
+                    "user": model_to_dict(item.user),
+                    "content": item.content,
+                    "reply_nums": item.reply_nums,
                     "like_nums": item.like_nums,
                     "has_liked": has_liked,
                     "id": item.id,
@@ -264,7 +265,7 @@ class PostCommentHanlder(RedisHandler):
 
     @authenticated_async
     async def post(self, post_id, *args, **kwargs):
-        #新增评论
+        # 新增评论
         re_data = {}
         param = self.request.body.decode("utf8")
         param = json.loads(param)
@@ -289,29 +290,29 @@ class PostCommentHanlder(RedisHandler):
 
         self.finish(re_data)
 
+
 class CommentReplyHandler(RedisHandler):
     @authenticated_async
     async def get(self, comment_id, *args, **kwargs):
         re_data = []
-        comment_replys = await self.application.objects.execute(PostComment.extend().where(PostComment.parent_comment_id==int(comment_id)))
+        comment_replys = await self.application.objects.execute(PostComment.extend().where(PostComment.parent_comment_id == int(comment_id)))
 
         for item in comment_replys:
             item_dict = {
-                "user":model_to_dict(item.user),
-                "content":item.content,
-                "reply_nums":item.reply_nums,
-                "add_time":item.add_time.strftime("%Y-%m-%d"),
-                "id":item.id
+                "user": model_to_dict(item.user),
+                "content": item.content,
+                "reply_nums": item.reply_nums,
+                "add_time": item.add_time.strftime("%Y-%m-%d"),
+                "id": item.id
             }
 
             re_data.append(item_dict)
 
         self.finish(self.finish(json.dumps(re_data, default=json_serial)))
 
-
     @authenticated_async
     async def post(self, comment_id, *args, **kwargs):
-        #添加回复
+        # 添加回复
         re_data = {}
         param = self.request.body.decode("utf8")
         param = json.loads(param)
@@ -324,13 +325,13 @@ class CommentReplyHandler(RedisHandler):
                 reply = await self.application.objects.create(PostComment, user=self.current_user, parent_comment=comment,
                                                               replyed_user=replyed_user, content=form.content.data)
 
-                #修改comment的回复数
+                # 修改comment的回复数
                 comment.reply_nums += 1
                 await self.application.objects.update(comment)
 
                 re_data["id"] = reply.id
                 re_data["user"] = {
-                    "id":self.current_user.id,
+                    "id": self.current_user.id,
                     "nick_name": self.current_user.nick_name
                 }
 
@@ -354,7 +355,7 @@ class CommentsLikeHanlder(RedisHandler):
         try:
             comment = await self.application.objects.get(PostComment, id=int(comment_id))
             comment_like = await self.application.objects.create(CommentLike, user=self.current_user,
-                                                          post_comment=comment)
+                                                                 post_comment=comment)
             comment.like_nums += 1
             await self.application.objects.update(comment)
 
@@ -364,4 +365,3 @@ class CommentsLikeHanlder(RedisHandler):
             self.set_status(404)
 
         self.finish(re_data)
-

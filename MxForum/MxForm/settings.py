@@ -4,6 +4,8 @@ import peewee_async
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 settings = {
+    "sms_need": False,
+    "api_key": "7ea03fbac6fb21859a166ed661ccda8e",
     "static_path": "C:/projects/tornado_overview/chapter03/static",
     "static_url_prefix": "/static/",
     "template_path": "templates",
@@ -19,7 +21,8 @@ settings = {
         "port": 3306
     },
     "redis":{
-        "host":"127.0.0.1"
+        "host":"127.0.0.1",
+        "password": "mtianyanRedisRoot"
     }
 }
 
