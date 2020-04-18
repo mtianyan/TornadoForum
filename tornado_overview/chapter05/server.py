@@ -45,14 +45,14 @@ class MainHandler(web.RequestHandler):
 
 
 settings = {
-    "static_path": "C:/projects/tornado_overview/chapter03/static",
+    "static_path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter05/static",
     "static_url_prefix": "/static/",
     "template_path": "templates",
     "db": {
         "host": "127.0.0.1",
         "user": "root",
-        "password": "root",
-        "name": "message",
+        "password": "mtianyan_root",
+        "name": "tornado_message",
         "port": 3306
     }
 }

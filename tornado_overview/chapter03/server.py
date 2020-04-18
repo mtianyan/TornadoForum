@@ -59,14 +59,14 @@ class MainHandler(web.RequestHandler):
 
 
 settings = {
-    "static_path": "C:/projects/tornado_overview/chapter03/static",
+    "static_path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter03/static",
     "static_url_prefix": "/static/",
     "template_path": "templates",
     "db": {
         "host": "127.0.0.1",
         "user": "root",
-        "password": "root",
-        "name": "message",
+        "password": "mtianyanroot",
+        "name": "tornado_message",
         "port": 3306
     }
 }
@@ -74,7 +74,7 @@ settings = {
 if __name__ == "__main__":
     app = web.Application([
         ("/", MainHandler, {"db": settings["db"]}),
-        ("/static/(.*)", StaticFileHandler, {"path": "C:/projects/tornado_overview/chapter03/static"})
+        ("/static/(.*)", StaticFileHandler, {"path": "/Users/mtianyan/Desktop/Github/TornadoForum/tornado_overview/chapter03/static"})
     ], debug=True, **settings)
     app.listen(8888)
     tornado.ioloop.IOLoop.current().start()

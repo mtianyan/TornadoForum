@@ -4,11 +4,12 @@ from peewee import *
 from peewee import Model
 import peewee_async
 
-db = MySQLDatabase('message', host="127.0.0.1", port=3306, user="root", password="root")
+db = MySQLDatabase('tornado_message', host="127.0.0.1", port=3306, user="root", password="mtianyanroot")
 
 database = peewee_async.MySQLDatabase(
-    'message', host="127.0.0.1", port=3306, user="root", password="root"
+    'tornado_message', host="127.0.0.1", port=3306, user="root", password="mtianyanroot"
 )
+
 
 objects = peewee_async.Manager(database)
 

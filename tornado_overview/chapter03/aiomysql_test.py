@@ -4,12 +4,13 @@ from aiomysql import create_pool
 
 async def go():
     async with create_pool(host='127.0.0.1', port=3306,
-                           user='root', password='ty158927',
-                           db='message', charset="utf8") as pool:
+                           user='root', password='mtianyanroot',
+                           db='tornado_message', charset="utf8") as pool:
         async with pool.acquire() as conn:
             async with conn.cursor() as cur:
                 await cur.execute("SELECT * from message")
-                value = await cur.fetchone()
+                # value = await cur.fetchone()
+                value = await cur.fetchall()
                 print(value)
 
 if __name__ == "__main__":
