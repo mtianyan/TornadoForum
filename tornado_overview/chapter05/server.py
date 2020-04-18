@@ -52,7 +52,7 @@ settings = {
         "host": "127.0.0.1",
         "user": "root",
         "password": "mtianyan_root",
-        "name": "tornado_message",
+        "name": "wt_message",
         "port": 3306
     }
 }

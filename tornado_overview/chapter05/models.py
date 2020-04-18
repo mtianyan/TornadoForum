@@ -3,7 +3,7 @@ from datetime import datetime
 from peewee import *
 from peewee import Model
 
-db = MySQLDatabase('message', host="127.0.0.1", port=3306, user="root", password="root")
+db = MySQLDatabase('wt_message', host="127.0.0.1", port=3306, user="root", password="mtianyanroot")
 
 
 class Message(Model):
@@ -15,7 +15,7 @@ class Message(Model):
 
     class Meta:
         database = db
-        table_name = "message"
+        table_name = "wt_message"
 
 
 if __name__ == "__main__":
