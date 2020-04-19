@@ -187,7 +187,7 @@ class AnswerReplyHandler(RedisHandler):
 
                 # 修改comment的回复数
                 answer.reply_nums += 1
-                await self.application.objects.update(answer)
+                await self.application.objects.update(answer, only=["reply_nums"])
 
                 re_data["id"] = reply.id
                 re_data["user"] = {

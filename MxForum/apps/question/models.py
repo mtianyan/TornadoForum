@@ -23,7 +23,7 @@ class Answer(BaseModel):
     # 回答和回复
     user = ForeignKeyField(User, verbose_name="用户")
     # user = ForeignKeyField(User, verbose_name="用户", related_name="author")
-    question = ForeignKeyField(Question, verbose_name="问题")
+    question = ForeignKeyField(Question, verbose_name="问题", null=True)
     parent_answer = ForeignKeyField('self', null=True, verbose_name="回答", related_name="answer_parent")
     reply_user = ForeignKeyField(User, verbose_name="用户", related_name="relyed_author", null=True)
     content = CharField(max_length=1000, verbose_name="内容")

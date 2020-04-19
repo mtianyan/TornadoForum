@@ -118,19 +118,35 @@ let vm = new Vue({
             })
         },
         //需要选择被评论人和answers的id
-        addreply(answerId){
+        // addreply(answerId){
+        //     let that = this;
+        //     axios.post('answers/'+answerId+'/replys/',{
+        //         "replyed_user":that.replyeduser,
+        //         "content":this.replyContent
+        //     },{
+        //         headers: {
+        //             tsessionid: store.state.tesssionid
+        //         }
+        //     }).then((req)=>{
+        //         console.log(req.data);
+        //         that.replyContent = ''
+        //     })
+        // },
+        addreply(answerId, userId){
             let that = this;
             axios.post('answers/'+answerId+'/replys/',{
-                "replyed_user":that.replyeduser,
+                "replyed_user":userId,
                 "content":this.replyContent
             },{
-                headers: {
-                    tsessionid: store.state.tesssionid
+                headers:{
+                    "tsessionid": store.state.tesssionid,
                 }
             }).then((req)=>{
                 console.log(req.data);
                 that.replyContent = ''
+                that.getreply(answerId)
             })
+
         },
         getreply(id){
             let that = this;
