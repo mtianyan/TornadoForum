@@ -94,7 +94,7 @@ class GroupHandler(RedisHandler):
         groups = await self.application.objects.execute(community_query)
         for group in groups:
             group_dict = model_to_dict(group)
-            group_dict["front_image"] = "{}/media/{}/".format(self.settings["SITE_URL"], group_dict["front_image"])
+            group_dict["front_image"] = "{}/media/{}/".format(self.settings["SITE_URL"], group.front_image)
             re_data.append(group_dict)
 
         self.finish(json.dumps(re_data, default=json_serial))
@@ -126,7 +126,7 @@ class GroupHandler(RedisHandler):
                 group = await self.application.objects.create(CommunityGroup,
                                                               creator=self.current_user, name=group_form.name.data,
                                                               category=group_form.category.data, desc=group_form.desc.data,
-                                                              notice=group_form.notice.data, from_image=new_filename)
+                                                              notice=group_form.notice.data, front_image=new_filename)
 
                 re_data["id"] = group.id
         else:

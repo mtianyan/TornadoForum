@@ -59,7 +59,7 @@ let vm = new Vue({
             formData.append('category', that.category);
             formData.append('desc', that.desc);
             formData.append('notice', that.notice);
-            formData.append('front_image', this.file);
+            formData.append('front_image', that.file);
             if(that.notice && that.desc && that.front_image && that.name && that.category){
                     axios.post('/groups/', formData,{
                         headers:{

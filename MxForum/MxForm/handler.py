@@ -1,6 +1,7 @@
 from tornado.web import RequestHandler
 import redis
 
+
 class BaseHandler(RequestHandler):
 
     def set_default_headers(self):
@@ -14,6 +15,7 @@ class BaseHandler(RequestHandler):
 
     def options(self, *args, **kwargs):
         pass
+
 
 class RedisHandler(BaseHandler):
     def __init__(self, application, request, **kwargs):
