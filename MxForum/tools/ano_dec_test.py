@@ -1,1 +1,1 @@
-from tools.dec_test import a
+from tools.dec_test import add

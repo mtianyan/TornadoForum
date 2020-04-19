@@ -10,7 +10,7 @@ urlpattern = (
 
     url("/posts/([0-9]+)/", PostDetailHandler),
 
-    #评论
+    # 评论
     url("/posts/([0-9]+)/comments/", PostCommentHanlder),
     url("/comments/([0-9]+)/replys/", CommentReplyHandler),
     url("/comments/([0-9]+)/likes/", CommentsLikeHanlder),

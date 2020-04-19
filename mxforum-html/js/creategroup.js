@@ -73,10 +73,11 @@ let vm = new Vue({
                             let data = res.data;
                             //给父组件传递emit事件，把返回的图片路径相关参数传递过去
                             that.$emit("upload", data );
-                            that.$message({
-                                type: "success",
-                                message: "上传成功！"
-                            })
+                            // that.$message({
+                            //     type: "success",
+                            //     message: "上传成功！"
+                            // })
+                            location.href = '../group/group.html'
                         }).catch(err => {
                         console.log(err);
                         if(err.data){

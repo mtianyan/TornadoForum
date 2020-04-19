@@ -1,71 +1,77 @@
 axios.defaults.baseURL = 'http://127.0.0.1:8888/';
 let vm = new Vue({
-    el:'#content',
-    data:{
-        groupId:13,
-        thisGroup:{},
-        postsList:[],
-        notLogin:false,
-        hot:[]
+    el: '#content',
+    data: {
+        groupId: 13,
+        thisGroup: {},
+        postsList: [],
+        notLogin: false,
+        hot: [],
+        all: true
     },
-    created(){
+    created() {
         this.getGroup();
         this.getPosts("全部帖子");
         this.getHot();
     },
-    methods:{
+    methods: {
         //根据groupID获取小组的信息
-        getGroup(){
+        getGroup() {
             let that = this;
             this.getGroupId();
-            if(!store.state.tesssionid){
+            if (!store.state.tesssionid) {
                 location.href = '../../login.html';
                 that.notLogin = false
-            }else {
+            } else {
                 that.notLogin = true
             }
-            axios.get('/groups/'+that.groupId+'/',{
-                headers:{
-                    "tsessionid":store.state.tesssionid
+            axios.get('/groups/' + that.groupId + '/', {
+                headers: {
+                    "tsessionid": store.state.tesssionid
                 }
-            }).then((req)=>{
-               that.thisGroup = req.data;
-               //处理小组的数组，将需要的groupID对应的小组赋值给thisGroup
-            }).catch((err)=>{
+            }).then((req) => {
+                that.thisGroup = req.data;
+                //处理小组的数组，将需要的groupID对应的小组赋值给thisGroup
+            }).catch((err) => {
                 console.log(err)
             })
         },
-        getGroupId(){
+        getGroupId() {
             this.groupId = location.href.split("=")[1];
         },
-        getPosts(category){
+        getPosts(category) {
             let that = this;
-            axios.get('/groups/'+that.groupId+'/posts/?cate='+category,{
-                headers:{
-                    "tsessionid":store.state.tesssionid
+            if (category == "全部帖子") {
+                that.all = true
+            } else {
+                that.all = false
+            }
+            axios.get('/groups/' + that.groupId + '/posts/?cate=' + category, {
+                headers: {
+                    "tsessionid": store.state.tesssionid
                 }
-            }).then((req)=>{
+            }).then((req) => {
                 that.postsList = req.data;
-            }).catch((err)=>{
+            }).catch((err) => {
                 console.log(err);
             })
         },
-        getHot(){
+        getHot() {
             let that = this;
-            axios.get('/groups/'+that.groupId+'/posts/?cate=hot',{
-                headers:{
-                    "tsessionid":store.state.tesssionid
+            axios.get('/groups/' + that.groupId + '/posts/?cate=hot', {
+                headers: {
+                    "tsessionid": store.state.tesssionid
                 }
-            }).then((req)=>{
+            }).then((req) => {
                 that.hot = req.data;
-            }).catch((err)=>{
+            }).catch((err) => {
                 console.log(err);
             })
         },
 
     },
-    computed:{
-        user:function () {
+    computed: {
+        user: function () {
             return store.state.username
         }
     }

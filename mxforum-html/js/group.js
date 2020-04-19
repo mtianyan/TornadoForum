@@ -11,7 +11,7 @@ let vm = new Vue({
         groupId:'',
         apply_reason:'',
         token:'',
-        category:'all',
+        category:'全部',
         number:1,
         hotnumber:true
     },
@@ -25,7 +25,7 @@ let vm = new Vue({
     },
     created(){
         this.showname();
-        this.getGroup("");
+        this.groupOrder("new");
         this.hottGroup("new")
     },
     methods:{
@@ -43,7 +43,7 @@ let vm = new Vue({
                 }).catch(function (err) {
                     console.log(err)
                 });
-            if(category == 'new'){
+            if(category == '全部'){
                 that.number = 1
             }else if(category == '教育同盟'){
                 that.number = 2
@@ -102,8 +102,13 @@ let vm = new Vue({
                 }
             }).then((req)=>{
                 console.log(req.data)
+                alert("申请成功")
+                this.hideJoin()
+                location.href = '../group/group.html'
             }).catch((err)=>{
-                console.log(err)
+                // console.log("err", err)
+                alert(err.response.data.non_fields)
+                this.hideJoin()
             })
         }
     }

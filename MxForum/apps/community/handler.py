@@ -20,14 +20,13 @@ class GroupDetailHanlder(RedisHandler):
         re_data = {}
         try:
             group = await self.application.objects.get(CommunityGroup, id=int(group_id))
-            item_dict = {}
-            item_dict["name"] = group.name
-            item_dict["id"] = group.id
-            item_dict["desc"] = group.desc
-            item_dict["notice"] = group.notice
-            item_dict["member_nums"] = group.member_nums
-            item_dict["post_nums"] = group.post_nums
-            item_dict["front_image"] = "{}/media/{}/".format(self.settings["SITE_URL"], group.front_image)
+            item_dict = {"name": group.name,
+                         "id": group.id,
+                         "desc": group.desc,
+                         "notice": group.notice,
+                         "member_nums": group.member_nums,
+                         "post_nums": group.post_nums,
+                         "front_image": "{}/media/{}/".format(self.settings["SITE_URL"], group.front_image)}
             re_data = item_dict
 
         except CommunityGroup.DoesNotExist as e:
@@ -59,6 +58,10 @@ class GroupMemberHandler(RedisHandler):
                 community_member = await self.application.objects.create(CommunityGroupMember, community=group,
                                                                          user=self.current_user,
                                                                          apply_reason=form.apply_reason.data)
+                # 对应的groups member+1
+                # Goods.update(click_num=Goods.click_num+1).where(Goods.id==1).execute()
+                group.member_nums += 1
+                await self.application.objects.update(group)
                 re_data["id"] = community_member.id
         else:
             self.set_status(400)
@@ -76,7 +79,7 @@ class GroupHandler(RedisHandler):
 
         # 根据类别进行过滤
         c = self.get_argument("c", None)
-        if c:
+        if c and c != "全部":
             community_query = community_query.filter(CommunityGroup.category == c)
 
         # 根据参数进行排序
@@ -149,7 +152,7 @@ class PostHandler(RedisHandler):
             group_member = await self.application.objects.get(CommunityGroupMember, user=self.current_user,
                                                               community=group, status="agree")
             posts_query = Post.extend()
-            c = self.get_argument("c", None)
+            c = self.get_argument("cate", None)
             if c == "hot":
                 posts_query = posts_query.filter(Post.is_hot == True)
             if c == "excellent":
@@ -321,9 +324,9 @@ class CommentReplyHandler(RedisHandler):
             try:
                 comment = await self.application.objects.get(PostComment, id=int(comment_id))
                 replyed_user = await self.application.objects.get(User, id=form.replyed_user.data)
-
-                reply = await self.application.objects.create(PostComment, user=self.current_user, parent_comment=comment,
-                                                              replyed_user=replyed_user, content=form.content.data)
+                # post = await self.application.objects.get(Post, id=int(post_id))
+                reply = await self.application.objects.create(PostComment, post=comment.post_id, user=self.current_user, parent_comment=comment,
+                                                              reply_user=replyed_user, content=form.content.data)
 
                 # 修改comment的回复数
                 comment.reply_nums += 1
@@ -354,13 +357,17 @@ class CommentsLikeHanlder(RedisHandler):
         re_data = {}
         try:
             comment = await self.application.objects.get(PostComment, id=int(comment_id))
+            comment_like_existed = await self.application.objects.get(CommentLike, user=self.current_user,
+                                                                      post_comment=comment)
+            await self.application.objects.delete(comment_like_existed)
+            re_data["id"] = -1
+        except CommentLike.DoesNotExist as e:
             comment_like = await self.application.objects.create(CommentLike, user=self.current_user,
                                                                  post_comment=comment)
             comment.like_nums += 1
             await self.application.objects.update(comment)
 
             re_data["id"] = comment_like.id
-
         except PostComment.DoesNotExist as e:
             self.set_status(404)
 
