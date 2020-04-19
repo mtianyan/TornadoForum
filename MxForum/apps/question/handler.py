@@ -20,7 +20,7 @@ class QuestionHandler(RedisHandler):
 
         # 根据类别进行过滤
         c = self.get_argument("c", None)
-        if c:
+        if c != "全部":
             question_query = question_query.filter(Question.category == c)
 
         # 根据参数进行排序
@@ -113,14 +113,14 @@ class AnswerHanlder(RedisHandler):
                 item_dict = {
                     "user": model_to_dict(item.user),
                     "content": item.content,
-                    "reply_nums": item.reply_nums,
+                    "answer_nums": item.reply_nums,
                     "id": item.id,
                 }
 
                 re_data.append(item_dict)
         except Question.DoesNotExist as e:
             self.set_status(404)
-        self.finish(self.finish(json.dumps(re_data, default=json_serial)))
+        self.finish(json.dumps(re_data, default=json_serial))
 
     @authenticated_async
     async def post(self, question_id, *args, **kwargs):
@@ -168,7 +168,7 @@ class AnswerReplyHandler(RedisHandler):
 
             re_data.append(item_dict)
 
-        self.finish(self.finish(json.dumps(re_data, default=json_serial)))
+        self.finish(json.dumps(re_data, default=json_serial))
 
     @authenticated_async
     async def post(self, answer_id, *args, **kwargs):

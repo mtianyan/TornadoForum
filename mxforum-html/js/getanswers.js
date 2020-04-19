@@ -13,7 +13,7 @@ let vm = new Vue({
         questions:{},
         content:'',
         answers:[],
-        showreply:'评论',
+        showreply: true,
         // show:false,
         replyContent:'',
         replies:[],
@@ -29,9 +29,9 @@ let vm = new Vue({
         notLogin(){
             return store.state.notLogin
         },
-        questionId(){
-            return store.state.groupId
-        }
+        // questionId(){
+        //     return store.state.groupId
+        // }
     },
     created(){
         this.getQuestionId();
@@ -41,7 +41,10 @@ let vm = new Vue({
     },
     methods:{
         getQuestionId(){
+            console.log(this.questionId)
+            console.log(location.href)
             this.questionId = location.href.split('=')[1]
+            console.log("qid",this.questionId)
         },
         showedComment:function (index,commentId) {
             let that = this;
@@ -84,6 +87,9 @@ let vm = new Vue({
         getanswer(){
             const that = this;
                 axios.get('questions/'+that.questionId+'/answers/',{
+                     headers: {
+                    tsessionid: store.state.tesssionid
+                }
                 })
                     .then(function(req){
                         that.answers = req.data;
@@ -101,8 +107,8 @@ let vm = new Vue({
             axios.post("questions/"+that.questionId+"/answers/",{
                 "content":that.content
             },{
-                headers:{
-                    "tsessionid": store.state.tesessionid,
+                headers: {
+                    tsessionid: store.state.tesssionid
                 }
             }).then((req)=>{
                 that.getanswer();
@@ -118,8 +124,8 @@ let vm = new Vue({
                 "replyed_user":that.replyeduser,
                 "content":this.replyContent
             },{
-                headers:{
-                    "tsessionid": store.state.tesessionid,
+                headers: {
+                    tsessionid: store.state.tesssionid
                 }
             }).then((req)=>{
                 console.log(req.data);
@@ -129,8 +135,8 @@ let vm = new Vue({
         getreply(id){
             let that = this;
             axios.get('/answers/'+id+'/replys/',{
-                headers:{
-                    "tsessionid": store.state.tesessionid,
+                headers: {
+                    tsessionid: store.state.tesssionid
                 }
             }).then((req)=>{
                 that.replies = req.data;
