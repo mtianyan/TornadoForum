@@ -5,6 +5,7 @@ import redis
 class BaseHandler(RequestHandler):
 
     def set_default_headers(self):
+        # tsessionid 登录
         self.set_header('Access-Control-Allow-Origin', '*')
         self.set_header('Access-Control-Allow-Headers', '*')
         self.set_header('Access-Control-Max-Age', 1000)

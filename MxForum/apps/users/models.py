@@ -22,6 +22,7 @@ class PasswordField(BlobField):
         if isinstance(value, PasswordHash):
             return bytes(value)
 
+        # if isinstance(value, unicode_type):
         if isinstance(value, str):
             value = value.encode('utf-8')
         salt = gensalt(self.bcrypt_iterations)
@@ -34,13 +35,16 @@ class PasswordField(BlobField):
 
         return PasswordHash(value)
 
+
 GENDERS = (
     ("female", "女"),
     ("male", "男")
 )
+
+
 class User(BaseModel):
     mobile = CharField(max_length=11, verbose_name="手机号码", index=True, unique=True)
-    password = PasswordField(verbose_name="密码") #1. 密文，2.不可反解
+    password = PasswordField(verbose_name="密码")  # 1. 密文，2.不可反解
     nick_name = CharField(max_length=20, null=True, verbose_name="昵称")
     head_url = CharField(max_length=200, null=True, verbose_name="头像")
     address = CharField(max_length=200, null=True, verbose_name="地址")

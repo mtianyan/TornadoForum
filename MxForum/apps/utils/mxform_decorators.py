@@ -13,12 +13,12 @@ def authenticated_async(method):
                 send_data = jwt.decode(tsessionid, self.settings["secret_key"], leeway=self.settings["jwt_expire"], options={"verify_exp": True})
                 user_id = send_data["id"]
 
-                #从数据库中获取到user并设置给_current_user
+                # 从数据库中获取到user并设置给_current_user
                 try:
                     user = await self.application.objects.get(User, id=user_id)
                     self._current_user = user
 
-                    #此处很关键
+                    # 此处很关键
                     await method(self, *args, **kwargs)
                 except User.DoesNotExist as e:
                     self.set_status(401)
