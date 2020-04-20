@@ -3,101 +3,101 @@
 
     1. 安装系统依赖包
     yum -y install openssl-devel zlib-devel bzip2-devel sqlite-devel readline-devel libffi-devel systemtap-sdt-devel
-    
-    2. 下载和安装python3.7 
-        
+
+    2. 下载和安装python3.7
+
         1. 下载
         wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
-        
+
         2. 解压和编译
         tar zvxf Python-3.7.0.tgz
         cd Python-3.7.0
         ./configure --prefix=/usr/local/python3.7 --enable-optimizations
         make && make install
-        
+
         3. 将python3.7设置为全局命令
         ln -s /usr/local/python3.7/bin/python3.7 /usr/bin/python37
-    
-    
+
+
 ### 2. 虚拟环境和安装和依赖包安装
-    
+
     1. 安装虚拟环境
-    
+
     yum install python-setuptools python-devel
     pip install virtualenvwrapper
-    
+
     2. 编辑.bashrc文件
-    
+
     先通过命令 sudo find / -name virtualenvwrapper.sh
     找到virtualenvwrapper.sh 文件所在位置
     vim ~/.bashrc
-    
+
     后在文件结尾输入：
         export WORKON_HOME=$HOME/.virtualenvs
         source /usr/bin/virtualenvwrapper.sh
-    
+
     最后退出vim后 source ~/.bashrc
 
     3. 新建虚拟环境
-        
+
         mkvirtualenv -p python37 mxforum
-    
+
     4. 安装依赖包
         进入项目目录后
-        
+
         pip install requirements.txt
 
 
 ### 3. mysql的安装和配置
-    
+
     1. 安装
-    
+
     sudo yum install mariadb-server
 
     2. 启动和重启
-        
+
     sudo systemctl start mariadb
     sudo systemctl restart mariadb
-    
+
     3. 设置bind-ip
-        
+
         vim /etc/my.cnf
         在 [mysqld]:
         下面加一行
         bind-address = 0.0.0.0
     4. 重启mariadb
         sudo systemctl restart mariadb
-    
+
     5. 设置外部ip可以访问
         进入mysql的命令 mysql -uroot -p
         如果提示输入密码则直接回车
-        
+
         先进入mysql才能运行下面命令:
             GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '123456' WITH GRANT OPTION;
             GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '123456' WITH GRANT OPTION;
             FLUSH PRIVILEGES;
     6. 设置阿里云的对外端口
     7. 通过navicat直接远程传输数据和新建数据库
-    
+
 
 ### 4. nginx和redis的安装和配置
-    
+
     1. 安装和启动redis
-        
+
         yum install redis
         sudo systemctl start redis
 
     2. 安装nginx
-        
+
         sudo yum install epel-release
         sudo yum install nginx
-        
+
         sudo systemctl start nginx
-        
+
     3. 拷贝nginx的配置文件到nginx目录下
     4. 修改nginx中相关的目录
     5. 修改nginx的启动用户为root并重启nginx
-        
+
 
 ### 5. tornado的项目启动
 
@@ -106,5 +106,4 @@
     3. 启动前端项目（要修改nginx的配置文件）
     4. 修改前端代码中的api接口
 
-    
-    
+
