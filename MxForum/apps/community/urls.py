@@ -14,4 +14,7 @@ urlpattern = (
     url("/posts/([0-9]+)/comments/", PostCommentHanlder),
     url("/comments/([0-9]+)/replys/", CommentReplyHandler),
     url("/comments/([0-9]+)/likes/", CommentsLikeHanlder),
+
+    url("/applys/", ApplyHandler),
+    url("/members/([0-9]+)/", HandlerApplyHandler),
 )

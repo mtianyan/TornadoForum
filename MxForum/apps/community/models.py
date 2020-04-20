@@ -37,6 +37,10 @@ class CommunityGroupMember(BaseModel):
     apply_reason = CharField(max_length=200, verbose_name="申请理由")
     handle_time = DateTimeField(default=datetime.now(), verbose_name="加入时间")
 
+    @classmethod
+    def extend(cls):
+        return cls.select(cls, User.id, User.nick_name).join(User)
+
 
 class Post(BaseModel):
     user = ForeignKeyField(User, verbose_name="用户")

@@ -5,6 +5,7 @@ from apps.users import urls as user_urls
 from apps.community import urls as community_urls
 from apps.ueditor import urls as ueditor_urls
 from apps.question import urls as question_urls
+from apps.message import urls as message_urls
 from MxForm.settings import settings
 
 
@@ -22,6 +23,7 @@ urlpattern += user_urls.url_pattern
 urlpattern += community_urls.urlpattern
 urlpattern += ueditor_urls.urlpattern
 urlpattern += question_urls.urlpattern
+urlpattern += message_urls.urlpattern
 
 # 集成ueditor注意事项
 # 前端的域名和后端的域名保持一致

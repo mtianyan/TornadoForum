@@ -6,7 +6,8 @@ from tornado.web import authenticated
 import aiofiles
 from playhouse.shortcuts import model_to_dict
 
-from MxForm.handler import RedisHandler
+from MxForm.handler import RedisHandler, BaseHandler
+from apps.message.models import Message
 from apps.utils.mxform_decorators import authenticated_async
 from apps.community.forms import *
 from apps.community.models import *
@@ -284,6 +285,14 @@ class PostCommentHanlder(RedisHandler):
                 re_data["user"] = {}
                 re_data["user"]["nick_name"] = self.current_user.nick_name
                 re_data["user"]["id"] = self.current_user.id
+
+                # 新增一条评论消息
+                receiver = await self.application.objects.get(User, id=post.user_id)
+                await self.application.objects.create(Message, sender=self.current_user,
+                                                      receiver=receiver,
+                                                      message_type=1,
+                                                      message=form.content.data,
+                                                      parent_content=post.title)
             except Post.DoesNotExist as e:
                 self.set_status(404)
         else:
@@ -337,6 +346,14 @@ class CommentReplyHandler(RedisHandler):
                     "id": self.current_user.id,
                     "nick_name": self.current_user.nick_name
                 }
+                # 新增评论回复消息
+                await self.application.objects.create(Message, sender=self.current_user,
+                                                      receiver=replyed_user,
+                                                      message_type=2,
+                                                      message=form.content.data,
+                                                      parent_content=comment.content
+                                                      )
+
 
             except PostComment.DoesNotExist as e:
                 self.set_status(404)
@@ -371,4 +388,60 @@ class CommentsLikeHanlder(RedisHandler):
         except PostComment.DoesNotExist as e:
             self.set_status(404)
 
+        self.finish(re_data)
+
+
+class ApplyHandler(BaseHandler):
+    @authenticated_async
+    async def get(self, *args, **kwargs):
+        re_data = []
+        # 1、获取到当前用户创建的所有小组
+        all_groups = await self.application.objects.execute(
+            CommunityGroup.select().where(CommunityGroup.creator_id == self.current_user.id))
+        all_group_ids = [group.id for group in all_groups]
+
+        # 2、获取当前用户创建的小组申请记录
+        community_member_query = CommunityGroupMember.extend().where(
+            CommunityGroupMember.community_id.in_(all_group_ids), CommunityGroupMember.status.is_null())
+        all_memebers = await self.application.objects.execute(community_member_query)
+        for member in all_memebers:
+            comm = await self.application.objects.get(CommunityGroup, id=member.community_id)
+            re_data.append({
+                "user": {
+                    "id": member.user.id,
+                    "nick_name": member.user.nick_name,
+                    "head_url": "/media/" + "" if not member.user.head_url else member.user.head_url
+                },
+                "group": comm.name,
+                "id": member.id,
+                "apply_reason": member.apply_reason,
+                "add_time": member.add_time.strftime("%Y-%m-%d %H:%M:%S")
+
+            })
+        self.finish(json.dumps(re_data))
+
+
+class HandlerApplyHandler(BaseHandler):
+    @authenticated_async
+    async def patch(self, apply_id, *args, **kwargs):
+        re_data = {}
+        param = self.request.body.decode("utf-8")
+        param = json.loads(param)
+        form = HandlerApplyForm.from_json(param)
+        if form.validate():
+            # 获取到我们的处理结果
+            status = form.status.data
+            handle_msg = form.handle_msg.data
+            try:
+                member = await self.application.objects.get(CommunityGroupMember, id=apply_id)
+                member.status = status
+                member.handle_msg = handle_msg
+                member.handle_time = datetime.now()
+                await self.application.objects.update(member)
+            except CommunityGroupMember.DoesNotExist as e:
+                self.set_status(400)
+        else:
+            self.set_status(400)
+            for field in form.errors:
+                re_data[field] = form.errors[field][0]
         self.finish(re_data)
